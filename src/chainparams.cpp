@@ -16,6 +16,7 @@
 
 static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
+    /*
     CMutableTransaction txNew;
     txNew.nVersion = 1;
     txNew.vin.resize(1);
@@ -32,6 +33,28 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
     genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
     genesis.hashPrevBlock.SetNull();
     genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
+     */
+    
+    ///修改
+    const char* pszTimestamp = "chongqing  stock index closed at 2343.57, on 24th Sept., 2018";
+    CMutableTransaction txNew;
+    txNew.vin.resize(1);
+    txNew.vout.resize(1);
+    txNew.vin[0].scriptSig = CScript() << 0x1d00ffff << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+    txNew.vout[0].nValue = nGenesisSubsidy * COIN;
+    txNew.vout[0].scriptPubKey = CScript() << ParseHex("049e02fa9aa3c19a3b112a58bab503c5caf797972f5cfe1006275aa5485a01b48f9f648bc5380ee1e82dc6f474c8e0f7e2f6bbd0de9355f92496e3ea327ccb19cc") << OP_CHECKSIG;
+    genesis.vtx.push_back(txNew);
+    genesis.hashPrevBlock = 0;
+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();
+    genesis.nVersion = 1;
+    genesis.nTime    = 1411666331;
+    genesis.nBits    = 0x1d00ffff;
+    genesis.nNonce   = 2056985438;
+    
+    hashGenesisBlock = genesis.GetHash();
+    assert(hashGenesisBlock == uint256("0x0000000061b1aca334b059920fed7bace2336ea4d23d63428c7aee04da49e942"));
+    assert(genesis.hashMerkleRoot == uint256("0x7bf229f629a6666596c1ce57117c28d1d29299e8a5303347929bd70847c49adb"));
+    
     return genesis;
 }
 
@@ -116,7 +139,7 @@ public:
         pchMessageStart[1] = 0xbe;
         pchMessageStart[2] = 0xb4;
         pchMessageStart[3] = 0xd9;
-        nDefaultPort = 8333;
+        nDefaultPort = 9999;
         nPruneAfterHeight = 100000;
 
         genesis = CreateGenesisBlock(1231006505, 2083236893, 0x1d00ffff, 1, 50 * COIN);
